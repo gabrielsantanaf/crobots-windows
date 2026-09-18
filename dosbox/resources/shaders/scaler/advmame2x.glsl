@@ -1,0 +1,84 @@
+#version 330 core
+
+// SPDX-FileCopyrightText:  2020-2026 The DOSBox Staging Team
+// SPDX-FileCopyrightText:  2003-2020 The DOSBox Team
+// SPDX-License-Identifier: GPL-2.0-or-later
+
+/*
+
+#pragma name        Main_Pass1
+#pragma output_size Viewport
+
+#pragma force_single_scan       on
+#pragma force_no_pixel_doubling on
+
+*/
+
+#if defined(VERTEX)
+
+layout (location = 0) in vec2 a_position;
+
+out vec2 v_texCoord;
+
+uniform vec2 INPUT_SIZE_0;
+
+void main()
+{
+	gl_Position = vec4(a_position, 0.0, 1.0);
+	v_texCoord = vec2(a_position.x + 1.0, a_position.y + 1.0) * INPUT_SIZE_0;
+}
+
+#elif defined(FRAGMENT)
+
+in vec2 v_texCoord;
+
+out vec4 FragColor;
+
+uniform vec2 INPUT_SIZE_0;
+uniform sampler2D INPUT_TEXTURE_0;
+
+vec3 getadvmame2xtexel(vec2 coord)
+{
+	vec2 base = floor(coord / vec2(2.0)) + vec2(0.5);
+	vec3 c4 = texture(INPUT_TEXTURE_0, base / INPUT_SIZE_0).xyz;
+	vec3 c1 = texture(INPUT_TEXTURE_0, (base - vec2(0.0, 1.0)) / INPUT_SIZE_0).xyz;
+	vec3 c7 = texture(INPUT_TEXTURE_0, (base + vec2(0.0, 1.0)) / INPUT_SIZE_0).xyz;
+	vec3 c3 = texture(INPUT_TEXTURE_0, (base - vec2(1.0, 0.0)) / INPUT_SIZE_0).xyz;
+	vec3 c5 = texture(INPUT_TEXTURE_0, (base + vec2(1.0, 0.0)) / INPUT_SIZE_0).xyz;
+
+	bool outer = c1 != c7 && c3 != c5;
+	bool c3c1 = outer && c3 == c1;
+	bool c1c5 = outer && c1 == c5;
+	bool c3c7 = outer && c3 == c7;
+	bool c7c5 = outer && c7 == c5;
+
+	vec3 l00 = mix(c4, c3, c3c1 ? 1.0 : 0.0);
+	vec3 l01 = mix(c4, c5, c1c5 ? 1.0 : 0.0);
+	vec3 l10 = mix(c4, c3, c3c7 ? 1.0 : 0.0);
+	vec3 l11 = mix(c4, c5, c7c5 ? 1.0 : 0.0);
+
+	coord = max(floor(mod(coord, 2.0)), 0.0);
+	/* 2x2 output:
+	 *    |x=0|x=1
+	 * y=0|l00|l01
+	 * y=1|l10|l11
+	 */
+
+	return mix(mix(l00, l01, coord.x), mix(l10, l11, coord.x), coord.y);
+}
+
+void main()
+{
+	vec2 coord = v_texCoord;
+	coord -= 0.5;
+
+	vec3 c0 = getadvmame2xtexel(coord);
+	vec3 c1 = getadvmame2xtexel(coord + vec2(1.0, 0.0));
+	vec3 c2 = getadvmame2xtexel(coord + vec2(0.0, 1.0));
+	vec3 c3 = getadvmame2xtexel(coord + vec2(1.0));
+
+	coord = fract(max(coord, 0.0));
+
+	FragColor = vec4(mix(mix(c0, c1, coord.x), mix(c2, c3, coord.x), coord.y), 1.0);
+}
+#endif

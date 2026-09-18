@@ -1,0 +1,143 @@
+================================================================
+  CROBOTS - COMO USAR
+================================================================
+
+Voce escreve um programa em C. Ele controla um robo que procura,
+persegue e destroi os outros robos. Depois que a batalha comeca,
+voce nao controla nada - so assiste. Quem ganha e o codigo melhor.
+
+
+----------------------------------------------------------------
+ 1. TESTANDO SE FUNCIONA
+----------------------------------------------------------------
+
+De dois cliques em DEMO.bat
+
+Deve abrir uma janela preta com quatro robos brigando. Se abrir,
+esta tudo certo. Feche a janela e siga em frente.
+
+
+----------------------------------------------------------------
+ 2. ESCREVENDO SEU ROBO
+----------------------------------------------------------------
+
+Os robos ficam na pasta "jogo". Sao arquivos de texto comum, com
+extensao .r
+
+Abra a pasta jogo, copie o arquivo "base.r", cole e renomeie para
+o seu nome. Exemplo: joao.r
+
+Abra o seu arquivo no Bloco de Notas, no VS Code ou em qualquer
+editor de texto. Escreva o codigo. Salve.
+
+IMPORTANTE: salve como texto simples. No Bloco de Notas, na hora
+de salvar, escolha Codificacao = UTF-8 ou ANSI. Nunca UTF-16.
+
+
+----------------------------------------------------------------
+ 3. RODANDO
+----------------------------------------------------------------
+
+De dois cliques em JOGAR.bat
+
+Abre uma janela preta com um prompt "C:\>". Ali voce digita:
+
+   dir *.r                          (lista os robos disponiveis)
+
+   crobots joao.r sniper.r          (batalha entre dois robos)
+
+   crobots joao.r sniper.r rook.r   (batalha entre tres)
+
+   crobots -m100 joao.r sniper.r    (roda 100 partidas, so o placar)
+
+   exit                             (fecha)
+
+Para interromper uma batalha no meio: Ctrl + C
+
+
+----------------------------------------------------------------
+ 4. SE A JANELA FICAR MUITO PEQUENA OU MUITO LENTA
+----------------------------------------------------------------
+
+Abra o arquivo dosbox-crobots.conf no Bloco de Notas.
+
+Partida muito lenta?  Aumente o numero em cycles=fixed 20000
+Partida rapida demais? Diminua.
+
+Janela pequena? Mude windowresolution=1280x800 para o tamanho
+que voce quiser.
+
+Alt + Enter alterna tela cheia.
+
+
+----------------------------------------------------------------
+ 5. ATALHOS UTEIS DO DOSBOX
+----------------------------------------------------------------
+
+Alt + Enter    tela cheia / janela
+Ctrl + F11     deixa a emulacao mais lenta
+Ctrl + F12     deixa a emulacao mais rapida
+Ctrl + F9      fecha o DOSBox na marra
+
+
+----------------------------------------------------------------
+ 6. REGRAS BASICAS DO JOGO
+----------------------------------------------------------------
+
+Campo de 1000 x 1000 metros, com muro em volta.
+Canto inferior esquerdo e x=0, y=0.
+
+Direcoes:  0 = leste (direita)
+          90 = norte (cima)
+         180 = oeste (esquerda)
+         270 = sul (baixo)
+
+Canhao: alcance de 700 metros, no maximo 2 misseis no ar.
+Scanner: enxerga qualquer direcao, resolucao ate 10 graus.
+Motor: velocidade 0 a 100. So da para virar abaixo de 50.
+
+Dano:  2%  bateu no muro ou em outro robo
+       3%  missil explodiu a ate 40 metros
+       5%  missil explodiu a ate 20 metros
+      10%  missil explodiu a ate 5 metros
+
+Morre com 100% de dano. Dano nao se recupera, mas tambem nao
+atrapalha: robo com 99% anda e atira igual a um robo intacto.
+
+
+----------------------------------------------------------------
+ 7. PEGADINHAS QUE DERRUBAM TODO MUNDO
+----------------------------------------------------------------
+
+NAO EXISTE numero com virgula. Tudo e inteiro.
+Por isso sin(45) devolve 70710, e nao 0,7071 - os valores da
+trigonometria vem multiplicados por 100.000.
+
+NAO EXISTE: float, struct, ponteiro, vetor, for, switch, break,
+char, #include, #define. Voce tem int, if, else, while e funcoes.
+
+O ROBO NAO VIRA em velocidade alta. drive(90,100) nao faz curva.
+Para virar, precisa estar a 50 ou menos.
+
+speed() NAO E igual ao ultimo drive(). Existe aceleracao.
+Se voce mandou andar e speed() da 0, voce bateu em alguma coisa.
+
+O PROGRAMA TEM LIMITE de 1000 instrucoes. Codigo enorme nao compila.
+
+
+----------------------------------------------------------------
+ 8. MONTAGEM (so se a pasta veio incompleta)
+----------------------------------------------------------------
+
+A pasta precisa ficar assim:
+
+   CROBOTS\
+      dosbox\dosbox.exe        (o emulador)
+      jogo\crobots.exe         (o jogo)
+      jogo\*.r                 (os robos)
+      dosbox-crobots.conf
+      JOGAR.bat
+      DEMO.bat
+      LEIA-ME.txt
+
+Se faltar dosbox\ ou jogo\, fale com o monitor.
